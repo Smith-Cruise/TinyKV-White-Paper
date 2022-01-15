@@ -1,8 +1,10 @@
-# TinyKV 白皮书
+# Talent Plan TinyKV 白皮书
 
 > "If I had known about this repository earlier, perhaps I would have had enough time to work out the Grand Unified Theory."
 >
 > #### Albert Einstein
+
+原文链接：[https://www.inlighting.org/archives/talent-plan-tinykv-white-paper/](https://www.inlighting.org/archives/talent-plan-tinykv-white-paper/)
 
 ## 前言
 
