@@ -103,6 +103,18 @@ func (d *peerMsgHandler) startToDestroyPeer() {
 
 ## Split
 
+Split 的分裂逻辑，假设在一个 store 上原本只有一个 regionA（存有 1~100 的数据），当 regionA 容量超出 split 阀值时触发 split 操作。首先我们需要找到那个 split key（其实是 50）。方法是调用 badger 的 API，按照**字典顺序**遍历这个 store 上的 kv，找到一分为二的 key。
+
+> 虽然 badger 遍历的时候是按照字典顺序遍历的，但并不意味着 kv 在 badger 里面是按顺序存储的。
+
+之后直接分裂成 regionA（存有 0~49） 和 regionB（存有 50~100）。注意 regionA 和 regionB 还是公用着同一个 store，也就是公用同一个 badger。也就是并不存在数据迁移的过程，你不需要把 regionA 里面的数据搬到 regionB 里去。
+
+**那这么分裂有什么意义，反正都是在一个 store 上？**
+
+1. 数据的粒度不一样，更细的粒度，可以实现更加精细的管理，比如当 regionA 访问压力过大时，可以单独增加 regionA 的 peer 的数量，分摊压力。
+
+2. 比如原本 0~100 的范围里面你只能使用一个 Raft Group 处理请求，然后你把它一分为二为两个 region，可以用两个 Raft Group，能提升访问性能。
+
 ### 触发 Split 流程
 
 1. `peer_msg_handler.go` 中的 `onTick()` 定时检查，调用 `onSplitRegionCheckTick()` 方法，它会生成一个 `SplitCheckTask` 任务发送到 `split_checker.go` 中。
