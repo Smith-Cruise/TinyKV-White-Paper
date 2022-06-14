@@ -149,6 +149,8 @@ d.notifyHeartbeatScheduler(rightRegion, newPeer)
 
 因为 Membership Change 和 split 修改了 regionEpoch 和 regionRanges，所以你在 apply 每一个 entry 时，你都要判断请求的 regionEpoch 是否正确且目标的 key 是不是在该 region 里面，如果不在，应该返回 `ErrRespStaleCommand()` 错误。
 
+在 `nclient >= 8 && crash = true && split = true` 这种条件下，测试在 Delete 阶段卡死问题，这是因为在 apply `CmdType_Put` 和 `CmdType_Delete` 请求的时候没有更新 `SizeDiffHint`。因此需要在 `Put` 的时候，`SizeDiffHint` 加上 `key` 和 `value` 的大小；在 `Delete` 的时候，减去 `key` 的大小。
+
 ## Scheduler
 
 这一节实现上层的调度器，对应的就是 TiKV 里面的 PD。这部分主要实现了一个收集心跳的函数和一个 region 的调度器。
