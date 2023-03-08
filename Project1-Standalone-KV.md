@@ -94,7 +94,7 @@ iter.Close()
 
 Badger 采用的也是 LSM-tree 结构，但是它参考了 [WiscKey](https://www.usenix.org/system/files/conference/fast16/fast16-papers-lu.pdf) 的设计，这里简单说下。
 
-LSM有两个缺点，一个是读取放大，一个是写入放大。WicsKey 假设我们都是有钱人，用的是SSD，那么我们就没有必要像传统LSM一样耗费大量的性能去实现顺序读。WicsKey 采取如下设计：
+LSM有两个缺点，一个是读取放大，一个是写入放大。WiscKey 假设我们都是有钱人，用的是SSD，那么我们就没有必要像传统LSM一样耗费大量的性能去实现顺序读。WiscKey 采取如下设计：
 
 ![](image/1-image.png)
 
